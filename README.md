@@ -105,33 +105,48 @@ evidence-grounded metrics (no ground-truth summaries required):
 
 ## Results
 
-### Unsupervised Clustering (Table 4)
-
-| Fusion Strategy | Silhouette↑ | Davies–Bouldin↓ | Calinski–Harabasz↑ | Clusters | Noise |
-|---|---|---|---|---|---|
-| Average Ensemble | 0.238 | 1.369 | 24.12 | 8 | 612 (63.7%) |
-| Weighted Ensemble | 0.259 | 1.287 | 25.67 | 9 | 564 (58.7%) |
-| Concatenation | 0.219 | 1.521 | 22.34 | 11 | 721 (75.1%) |
-| **Concat + PCA** | **0.271** | **1.241** | **26.94** | **10** | **412 (42.9%)** |
-
-### RAG Summarization Ablation (Table 1)
+## Table 5. Evaluation of RAG summarization strategies (ablation study)
 
 | Model | Faithfulness ↑ | Cluster Coverage ↑ |
-|---|---|---|
+|-------|---------------|-------------------|
 | Baseline RAG | 0.71 | 0.59 |
 | Supervised RAG | 0.89 | 0.60 |
 | **Supervised + Unsupervised RAG (Ours)** | **0.93** | **0.64** |
 
-### Supervised Classification (Table 2)
+---
 
-| Model | Primary Acc | EduRABSA Acc | Coursera Acc |
-|---|---|---|---|
-| TF-IDF + LR/SVM | 77.1% | 73.4% | 74.8% |
-| SetFit | 81.3% | 78.2% | 79.5% |
-| DeBERTa-LoRA | 83.3% | 80.1% | 81.4% |
-| **Ensemble (Ours)** | **83.1%** | **80.8%** | **82.1%** |
+## Table 6. Comparison of RAG summaries under high and moderate supervised–unsupervised agreement
 
-*Mean ± std over 5-fold cross-validation. Full table with F1 scores in the paper.*
+| Component | Example 1: High agreement | Example 2: Split clusters |
+|-----------|--------------------------|--------------------------|
+| **Category** | Teaching Quality (supervised ensemble) | General Comments & Satisfaction (supervised ensemble) |
+| **Samples analyzed** | 105 total → 10 via RAG (top-k) | 210 total → 10 via RAG (top-k) |
+| **Cluster mapping** | 84% → C0 (96.9% purity) | 41% → C1 (90.8% purity); 32% → C3; 27% noise |
+| **Agreement level** | High (C0 predominantly Teaching Quality) | Moderate (category spans multiple clusters) |
+| **Top keywords** | *lectures, clarity, examples, pacing, difficult, fast* | *overall, satisfied, workload, balance, experience* |
+| **Generated summary** | Lecture clarity and pacing issues dominate, with **68% negative sentiment**. Difficulty following explanations (**84%**), rapid pacing (**76%**), and insufficient worked examples (**62%**) were frequent. Actions include **3–4 worked examples per lecture**, **pause intervals**, **scaffolding materials**, and **reduced content density**. | Feedback is heterogeneous: **58% overall satisfaction**, with helpfulness (45%) and challenging-but-rewarding perceptions (38%). Concerns include workload/resources (32%) and work–life balance (27%). Outputs include both actionable items and diagnostic flags for manual review. |
+| **Statistics provided** | 4 indicators (68%, 84%, 76%, 62%) | 6 indicators (58%, 45%, 38%, 32%, 42%, 35%) |
+| **Actionability** | 4 quantified recommendations | Mixed: actionable + diagnostic |
+| **Traceability** | Category: Teaching Quality; Cluster: C0; IDs: FB_0023, FB_0087, FB_0134, FB_0156, FB_0189, FB_0203, FB_0267, FB_0289, FB_0312, FB_0378 | Category: General Comments; Clusters: C1, C3, noise; IDs: FB_0156, FB_0189, FB_0234, FB_0278, FB_0301, FB_0345, FB_0389, FB_0412, FB_0456, FB_0489 |
+
+---
+
+## Table 3. Supervised learning performance across datasets (mean ± std over 5-fold CV)
+
+| Model | Primary Acc | Primary F1 | EduRABSA Acc | EduRABSA F1 | Coursera Acc | Coursera F1 |
+|-------|------------|-----------|-------------|------------|-------------|------------|
+| *Classical Models* | | | | | | |
+| TF-IDF + LR/SVM | 80.0 (±2.7) | 0.798 | 72.9 (±0.9) | 0.700 | 48.3 (±1.6) | 0.492 |
+| Hybrid (TF-IDF + Emb) | 82.2 (±2.2) | 0.821 | 74.4 (±1.1) | 0.715 | 49.4 (±0.9) | 0.519 |
+| *Neural Models* | | | | | | |
+| DTLP | 74.5 (±3.4) | 0.746 | 59.4 (±0.7) | 0.546 | 47.5 (±1.0) | 0.402 |
+| MHAF | 71.6 (±1.9) | 0.714 | 61.5 (±0.7) | 0.547 | 48.8 (±0.8) | 0.384 |
+| *Transformer Models* | | | | | | |
+| SetFit | 84.5 (±2.5) | 0.846 | 80.2 (±1.1) | 0.774 | 49.3 (±0.7) | 0.469 |
+| DeBERTa-LoRA | 83.3 (±1.2) | 0.820 | 73.2 (±1.1) | 0.699 | 47.1 (±1.2) | 0.420 |
+| MPNet FT | 79.2 (±2.5) | 0.799 | 72.9 (±0.5) | 0.688 | 48.4 (±1.9) | 0.438 |
+| **Ensemble (Ours)** | **83.0 (±2.0)** | **0.829** | **81.1 (±1.4)** | **0.778** | **49.8 (±0.7)** | **0.534** |
+
 
 ---
 
